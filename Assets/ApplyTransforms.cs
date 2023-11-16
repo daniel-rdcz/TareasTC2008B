@@ -84,18 +84,18 @@ public class ApplyTransforms : MonoBehaviour
 
     void DoTransform()
     {
-        Vector3 OrgPosWheel1 = new Vector3(2.79999995f, 0.600000024f, 1.70000005f);
-        Vector3 OrgPosWheel2 = new Vector3(2.79999995f, 0.600000024f, -2f);
-        Vector3 OrgPosWheel3 = new Vector3(-2.79999995f, 0.600000024f, 1.70000005f);
-        Vector3 OrgPosWheel4 = new Vector3(-2.79999995f, 0.600000024f, -2f);
+        Vector3 OrgPosWheel1 = new Vector3(2f,0.600000024f,-2.79999995f);
+        Vector3 OrgPosWheel2 = new Vector3(-2f,0.600000024f,-2.79999995f);
+        Vector3 OrgPosWheel3 = new Vector3(2f,0.600000024f,2.78999996f);
+        Vector3 OrgPosWheel4 = new Vector3(-2f,0.600000024f,2.78999996f);
 
         Matrix4x4 move = Transforms.TranslationMat(displacement.x * Time.time,
                                                       displacement.y * Time.time,
                                                       displacement.z * Time.time);
 
-        Matrix4x4 move_wheels = Transforms.TranslationMat(-displacement.z * Time.time,
+        Matrix4x4 move_wheels = Transforms.TranslationMat(-displacement.x * Time.time,
                                                       displacement.y * Time.time,
-                                                      displacement.x * Time.time);
+                                                      displacement.z * Time.time);
 
         Matrix4x4 rotate = Transforms.RotateMat(angle_wheel * Time.time, 
                                                     rotationAxis);
