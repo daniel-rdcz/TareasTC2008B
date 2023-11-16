@@ -2,11 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Enumeration to define the axis
 public enum AXIS {X, Y, Z};
-// Values:        0  1  2
 
-public class HW_Transforms : MonoBehaviour
+public class Transforms : MonoBehaviour
 {
     public static Matrix4x4 TranslationMat(float tx, float ty, float tz)
     {

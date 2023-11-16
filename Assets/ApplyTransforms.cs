@@ -5,9 +5,9 @@ using UnityEngine;
 public class ApplyTransforms : MonoBehaviour
 {
     [SerializeField] Vector3 displacement;
-    [SerializeField] float angle;
+    [SerializeField] float angle_wheel;
 
-    [SerializeField] float giro;
+    [SerializeField] float direction;
     [SerializeField] AXIS rotationAxis;
 
     [SerializeField] private GameObject[] wheels;
@@ -28,8 +28,6 @@ public class ApplyTransforms : MonoBehaviour
     Vector3[] newVertices_wheel3;
     Vector3[] newVertices_wheel4;
 
-
-    // Start is called before the first frame update
     void Start()
     {
         mesh = GetComponentInChildren<MeshFilter>().mesh;
@@ -47,7 +45,6 @@ public class ApplyTransforms : MonoBehaviour
         mesh_wheel4 = wheels[3].GetComponentInChildren<MeshFilter>().mesh;
         baseVertices_wheel4 = mesh_wheel4.vertices;
 
-        // Create a copy of the original vertices
         newVertices = new Vector3[baseVertices.Length];
         for (int i=0; i < baseVertices.Length; i++)
         {
@@ -80,7 +77,6 @@ public class ApplyTransforms : MonoBehaviour
 
     }
 
-    // Update is called once per frame
     void Update()
     {
         DoTransform();        
@@ -93,32 +89,32 @@ public class ApplyTransforms : MonoBehaviour
         Vector3 OrgPosWheel3 = new Vector3(-2.79999995f, 0.600000024f, 1.70000005f);
         Vector3 OrgPosWheel4 = new Vector3(-2.79999995f, 0.600000024f, -2f);
 
-        Matrix4x4 move = HW_Transforms.TranslationMat(displacement.x * Time.time,
+        Matrix4x4 move = Transforms.TranslationMat(displacement.x * Time.time,
                                                       displacement.y * Time.time,
                                                       displacement.z * Time.time);
 
-        Matrix4x4 move_wheels = HW_Transforms.TranslationMat(-displacement.z * Time.time,
+        Matrix4x4 move_wheels = Transforms.TranslationMat(-displacement.z * Time.time,
                                                       displacement.y * Time.time,
                                                       displacement.x * Time.time);
 
-        Matrix4x4 rotate = HW_Transforms.RotateMat(angle * Time.time, 
+        Matrix4x4 rotate = Transforms.RotateMat(angle_wheel * Time.time, 
                                                     rotationAxis);
 
-        Matrix4x4 rotate_car = HW_Transforms.RotateMat(giro, AXIS.Y);
+        Matrix4x4 rotate_car = Transforms.RotateMat(direction, AXIS.Y);
 
-        Matrix4x4 moveWheel1 = HW_Transforms.TranslationMat(OrgPosWheel1.x,
+        Matrix4x4 moveWheel1 = Transforms.TranslationMat(OrgPosWheel1.x,
                                                            OrgPosWheel1.y,
                                                            OrgPosWheel1.z);
 
-        Matrix4x4 moveWheel2 = HW_Transforms.TranslationMat(OrgPosWheel2.x,
+        Matrix4x4 moveWheel2 = Transforms.TranslationMat(OrgPosWheel2.x,
                                                            OrgPosWheel2.y,
                                                            OrgPosWheel2.z);
 
-        Matrix4x4 moveWheel3 = HW_Transforms.TranslationMat(OrgPosWheel3.x,
+        Matrix4x4 moveWheel3 = Transforms.TranslationMat(OrgPosWheel3.x,
                                                            OrgPosWheel3.y,
                                                            OrgPosWheel3.z);
 
-        Matrix4x4 moveWheel4 = HW_Transforms.TranslationMat(OrgPosWheel4.x,
+        Matrix4x4 moveWheel4 = Transforms.TranslationMat(OrgPosWheel4.x,
                                                            OrgPosWheel4.y,
                                                            OrgPosWheel4.z);                                                  
         
@@ -174,7 +170,6 @@ public class ApplyTransforms : MonoBehaviour
             newVertices_wheel4[i] = composite_wheel4 * temp;
         }
 
-        // Replace the vertices in the mesh
         mesh.vertices = newVertices;
         mesh.RecalculateNormals();
 
