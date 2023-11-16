@@ -28,9 +28,6 @@ public class ApplyTransforms : MonoBehaviour
     Vector3[] newVertices_wheel3;
     Vector3[] newVertices_wheel4;
 
-    Matrix4x4 composite = Matrix4x4.identity;
-
-    float speed = 0.01f;  // Puedes ajustar este valor según sea necesario
 
     // Start is called before the first frame update
     void Start()
@@ -91,83 +88,14 @@ public class ApplyTransforms : MonoBehaviour
 
     void DoTransform()
     {
-        Vector3 OrgPos = new Vector3(0, 0, 0);
-        Vector3 CurrentCarPosition = transform.position;
         Vector3 OrgPosWheel1 = new Vector3(2.79999995f, 0.600000024f, 1.70000005f);
         Vector3 OrgPosWheel2 = new Vector3(2.79999995f, 0.600000024f, -2f);
         Vector3 OrgPosWheel3 = new Vector3(-2.79999995f, 0.600000024f, 1.70000005f);
         Vector3 OrgPosWheel4 = new Vector3(-2.79999995f, 0.600000024f, -2f);
 
-        if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            giro = 90.0f;
-            Matrix4x4 orgPos = HW_Transforms.TranslationMat(OrgPos.x,
-                                                            OrgPos.y,
-                                                            OrgPos.z);
-
-            Matrix4x4 rotateRight = HW_Transforms.RotateMat(giro, AXIS.Y);
-
-            Matrix4x4 backCar = HW_Transforms.TranslationMat(CurrentCarPosition.x,
-                                                            CurrentCarPosition.y,
-                                                            CurrentCarPosition.z);
-
-            composite *= orgPos * rotateRight * backCar;  // Multiplicar por la matriz acumulada
-        }
-
-        else if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            giro = 180.0f;
-            Matrix4x4 orgPos = HW_Transforms.TranslationMat(OrgPos.x,
-                                                            OrgPos.y,
-                                                            OrgPos.z);
-
-            Matrix4x4 rotateRight = HW_Transforms.RotateMat(giro, AXIS.Y);
-
-            Matrix4x4 backCar = HW_Transforms.TranslationMat(CurrentCarPosition.x,
-                                                            CurrentCarPosition.y,
-                                                            CurrentCarPosition.z);
-
-            composite *= orgPos * rotateRight * backCar;  // Multiplicar por la matriz acumulada
-        }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            giro = 270.0f;
-            Matrix4x4 orgPos = HW_Transforms.TranslationMat(OrgPos.x,
-                                                            OrgPos.y,
-                                                            OrgPos.z);
-
-            Matrix4x4 rotateRight = HW_Transforms.RotateMat(giro, AXIS.Y);
-
-            Matrix4x4 backCar = HW_Transforms.TranslationMat(CurrentCarPosition.x,
-                                                            CurrentCarPosition.y,
-                                                            CurrentCarPosition.z);
-
-            composite *= orgPos * rotateRight * backCar;  // Multiplicar por la matriz acumulada
-        }
-        else if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            giro = 0.0f;
-            Matrix4x4 orgPos = HW_Transforms.TranslationMat(OrgPos.x,
-                                                            OrgPos.y,
-                                                            OrgPos.z);
-
-            Matrix4x4 rotateRight = HW_Transforms.RotateMat(giro, AXIS.Y);
-
-            Matrix4x4 backCar = HW_Transforms.TranslationMat(CurrentCarPosition.x * speed,
-                                                            CurrentCarPosition.y * speed,
-                                                            CurrentCarPosition.z * speed);
-
-            composite *= orgPos * rotateRight * backCar;  // Multiplicar por la matriz acumulada
-        }
-
-        else
-        {
-            Matrix4x4 move = HW_Transforms.TranslationMat(displacement.x * speed,
-                                            displacement.y * speed,
-                                            displacement.z * speed);
-
-            composite *= move;  // Multiplicar por la matriz acumulada
-        }
+        Matrix4x4 move = HW_Transforms.TranslationMat(displacement.x * Time.time,
+                                                      displacement.y * Time.time,
+                                                      displacement.z * Time.time);
 
         Matrix4x4 move_wheels = HW_Transforms.TranslationMat(-displacement.z * Time.time,
                                                       displacement.y * Time.time,
@@ -175,7 +103,8 @@ public class ApplyTransforms : MonoBehaviour
 
         Matrix4x4 rotate = HW_Transforms.RotateMat(angle * Time.time, 
                                                     rotationAxis);
-        
+
+        Matrix4x4 rotate_car = HW_Transforms.RotateMat(giro, AXIS.Y);
 
         Matrix4x4 moveWheel1 = HW_Transforms.TranslationMat(OrgPosWheel1.x,
                                                            OrgPosWheel1.y,
@@ -191,12 +120,14 @@ public class ApplyTransforms : MonoBehaviour
 
         Matrix4x4 moveWheel4 = HW_Transforms.TranslationMat(OrgPosWheel4.x,
                                                            OrgPosWheel4.y,
-                                                           OrgPosWheel4.z);         
+                                                           OrgPosWheel4.z);                                                  
+        
+        Matrix4x4 composite = rotate_car * move;
 
-        Matrix4x4 composite_wheel1 =  moveWheel1 * move_wheels * rotate;
-        Matrix4x4 composite_wheel2 =  moveWheel2 * move_wheels * rotate;
-        Matrix4x4 composite_wheel3 =  moveWheel3 * move_wheels * rotate;
-        Matrix4x4 composite_wheel4 =  moveWheel4 * move_wheels * rotate;
+        Matrix4x4 composite_wheel1 = rotate_car * moveWheel1 * move_wheels * rotate;
+        Matrix4x4 composite_wheel2 = rotate_car * moveWheel2 * move_wheels * rotate;
+        Matrix4x4 composite_wheel3 = rotate_car * moveWheel3 * move_wheels * rotate;
+        Matrix4x4 composite_wheel4 = rotate_car * moveWheel4 * move_wheels * rotate;
 
         for (int i=0; i < newVertices.Length; i++)
         {
